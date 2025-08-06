@@ -1,12 +1,28 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Phone, MapPin, Mic, Settings, Shield, Users, Plus, X, PhoneCall } from "lucide-react";
+import {
+  Phone,
+  MapPin,
+  Mic,
+  Settings,
+  Shield,
+  Users,
+  Plus,
+  X,
+  PhoneCall,
+} from "lucide-react";
 
 interface Contact {
   id: string;
@@ -24,16 +40,22 @@ interface LocationData {
 export default function Index() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isEmergencyActive, setIsEmergencyActive] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<LocationData | null>(null);
-  const [locationPermission, setLocationPermission] = useState<"granted" | "denied" | "prompt">("prompt");
-  const [micPermission, setMicPermission] = useState<"granted" | "denied" | "prompt">("prompt");
+  const [currentLocation, setCurrentLocation] = useState<LocationData | null>(
+    null,
+  );
+  const [locationPermission, setLocationPermission] = useState<
+    "granted" | "denied" | "prompt"
+  >("prompt");
+  const [micPermission, setMicPermission] = useState<
+    "granted" | "denied" | "prompt"
+  >("prompt");
   const [isRecording, setIsRecording] = useState(false);
   const [newContactName, setNewContactName] = useState("");
   const [newContactPhone, setNewContactPhone] = useState("");
   const [showAddContact, setShowAddContact] = useState(false);
   const [emergencyLog, setEmergencyLog] = useState<string[]>([]);
   const [currentContactIndex, setCurrentContactIndex] = useState(0);
-  
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -42,7 +64,7 @@ export default function Index() {
     if (savedContacts) {
       setContacts(JSON.parse(savedContacts));
     }
-    
+
     checkPermissions();
   }, []);
 
@@ -50,9 +72,13 @@ export default function Index() {
     // Check location permission
     if ("geolocation" in navigator) {
       try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-        });
+        const position = await new Promise<GeolocationPosition>(
+          (resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              timeout: 5000,
+            });
+          },
+        );
         setLocationPermission("granted");
         updateLocation(position);
       } catch {
@@ -64,7 +90,7 @@ export default function Index() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setMicPermission("granted");
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
     } catch {
       setMicPermission("denied");
     }
@@ -75,7 +101,7 @@ export default function Index() {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
       accuracy: position.coords.accuracy,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
     setCurrentLocation(locationData);
   };
@@ -88,7 +114,7 @@ export default function Index() {
           updateLocation(position);
         },
         () => setLocationPermission("denied"),
-        { enableHighAccuracy: true, timeout: 10000 }
+        { enableHighAccuracy: true, timeout: 10000 },
       );
     }
   };
@@ -97,22 +123,29 @@ export default function Index() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setMicPermission("granted");
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
     } catch {
       setMicPermission("denied");
     }
   };
 
   const addContact = () => {
-    if (newContactName.trim() && newContactPhone.trim() && contacts.length < 3) {
+    if (
+      newContactName.trim() &&
+      newContactPhone.trim() &&
+      contacts.length < 3
+    ) {
       const newContact: Contact = {
         id: Date.now().toString(),
         name: newContactName.trim(),
-        phone: newContactPhone.trim()
+        phone: newContactPhone.trim(),
       };
       const updatedContacts = [...contacts, newContact];
       setContacts(updatedContacts);
-      localStorage.setItem("emergencyContacts", JSON.stringify(updatedContacts));
+      localStorage.setItem(
+        "emergencyContacts",
+        JSON.stringify(updatedContacts),
+      );
       setNewContactName("");
       setNewContactPhone("");
       setShowAddContact(false);
@@ -120,7 +153,7 @@ export default function Index() {
   };
 
   const removeContact = (id: string) => {
-    const updatedContacts = contacts.filter(contact => contact.id !== id);
+    const updatedContacts = contacts.filter((contact) => contact.id !== id);
     setContacts(updatedContacts);
     localStorage.setItem("emergencyContacts", JSON.stringify(updatedContacts));
   };
@@ -128,11 +161,13 @@ export default function Index() {
   const startRecording = async () => {
     if (micPermission === "granted") {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
         mediaRecorderRef.current = new MediaRecorder(stream);
         mediaRecorderRef.current.start();
         setIsRecording(true);
-        
+
         // Auto-stop recording after 30 seconds
         recordingTimeoutRef.current = setTimeout(() => {
           stopRecording();
@@ -146,9 +181,11 @@ export default function Index() {
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current.stream
+        .getTracks()
+        .forEach((track) => track.stop());
       setIsRecording(false);
-      
+
       if (recordingTimeoutRef.current) {
         clearTimeout(recordingTimeoutRef.current);
       }
@@ -164,11 +201,13 @@ export default function Index() {
     setIsEmergencyActive(true);
     setCurrentContactIndex(0);
     const log: string[] = [];
-    
+
     // Get current location
     if (locationPermission === "granted") {
       navigator.geolocation.getCurrentPosition(updateLocation);
-      log.push(`📍 Ubicación actualizada: ${currentLocation?.latitude.toFixed(6)}, ${currentLocation?.longitude.toFixed(6)}`);
+      log.push(
+        `📍 Ubicación actualizada: ${currentLocation?.latitude.toFixed(6)}, ${currentLocation?.longitude.toFixed(6)}`,
+      );
     }
 
     // Start recording
@@ -228,7 +267,9 @@ export default function Index() {
             <Shield className="h-8 w-8 text-emergency" />
             <h1 className="text-3xl font-bold text-foreground">SafeAlert</h1>
           </div>
-          <p className="text-muted-foreground">Sistema de emergencia personal</p>
+          <p className="text-muted-foreground">
+            Sistema de emergencia personal
+          </p>
         </div>
 
         {/* Emergency Status */}
@@ -242,7 +283,9 @@ export default function Index() {
             </CardHeader>
             <CardContent className="space-y-3">
               {emergencyLog.map((entry, index) => (
-                <p key={index} className="text-sm text-foreground">{entry}</p>
+                <p key={index} className="text-sm text-foreground">
+                  {entry}
+                </p>
               ))}
               {contacts.length > 0 && (
                 <div className="flex items-center gap-2">
@@ -252,7 +295,7 @@ export default function Index() {
                   </span>
                 </div>
               )}
-              <Button 
+              <Button
                 onClick={deactivateEmergency}
                 variant="outline"
                 size="sm"
@@ -299,28 +342,44 @@ export default function Index() {
                 <span>Ubicación</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant={locationPermission === "granted" ? "default" : "destructive"}>
+                <Badge
+                  variant={
+                    locationPermission === "granted" ? "default" : "destructive"
+                  }
+                >
                   {locationPermission === "granted" ? "Permitido" : "Denegado"}
                 </Badge>
                 {locationPermission !== "granted" && (
-                  <Button size="sm" variant="outline" onClick={requestLocationPermission}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={requestLocationPermission}
+                  >
                     Permitir
                   </Button>
                 )}
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Mic className="h-4 w-4" />
                 <span>Micrófono</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant={micPermission === "granted" ? "default" : "destructive"}>
+                <Badge
+                  variant={
+                    micPermission === "granted" ? "default" : "destructive"
+                  }
+                >
                   {micPermission === "granted" ? "Permitido" : "Denegado"}
                 </Badge>
                 {micPermission !== "granted" && (
-                  <Button size="sm" variant="outline" onClick={requestMicPermission}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={requestMicPermission}
+                  >
                     Permitir
                   </Button>
                 )}
@@ -329,9 +388,9 @@ export default function Index() {
 
             {currentLocation && (
               <div className="text-xs text-muted-foreground">
-                📍 Última ubicación: {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
-                <br />
-                ⏰ {new Date(currentLocation.timestamp).toLocaleString()}
+                📍 Última ubicación: {currentLocation.latitude.toFixed(6)},{" "}
+                {currentLocation.longitude.toFixed(6)}
+                <br />⏰ {new Date(currentLocation.timestamp).toLocaleString()}
               </div>
             )}
           </CardContent>
@@ -346,8 +405,8 @@ export default function Index() {
             </CardTitle>
             <Dialog open={showAddContact} onOpenChange={setShowAddContact}>
               <DialogTrigger asChild>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="outline"
                   disabled={contacts.length >= 3}
                 >
@@ -393,12 +452,17 @@ export default function Index() {
             ) : (
               <div className="space-y-3">
                 {contacts.map((contact, index) => (
-                  <div key={contact.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={contact.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <Badge variant="outline">{index + 1}</Badge>
                       <div>
                         <p className="font-medium">{contact.name}</p>
-                        <p className="text-sm text-muted-foreground">{contact.phone}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {contact.phone}
+                        </p>
                       </div>
                     </div>
                     <Button
@@ -414,7 +478,8 @@ export default function Index() {
             )}
             <Separator className="my-4" />
             <p className="text-xs text-muted-foreground">
-              Máximo 3 contactos. Se llamarán en orden hasta que alguien conteste.
+              Máximo 3 contactos. Se llamarán en orden hasta que alguien
+              conteste.
             </p>
           </CardContent>
         </Card>
@@ -422,7 +487,8 @@ export default function Index() {
         {/* Footer */}
         <div className="text-center py-4">
           <p className="text-xs text-muted-foreground">
-            En caso de emergencia real, también contacta servicios de emergencia locales
+            En caso de emergencia real, también contacta servicios de emergencia
+            locales
           </p>
         </div>
       </div>

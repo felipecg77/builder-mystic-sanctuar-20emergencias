@@ -213,6 +213,56 @@ export default function Index() {
     }
   };
 
+  const startTestRecording = async () => {
+    if (micPermission === "granted" && !isRecording) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+
+        mediaRecorderRef.current = new MediaRecorder(stream);
+
+        const audioChunks: BlobPart[] = [];
+        mediaRecorderRef.current.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorderRef.current.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          // Create a temporary audio element to play the recording
+          const audio = new Audio(audioUrl);
+          audio.play().catch(err => console.error("Error playing audio:", err));
+        };
+
+        mediaRecorderRef.current.start();
+        setIsRecording(true);
+
+        // Auto-stop after 5 seconds for test
+        recordingTimeoutRef.current = setTimeout(() => {
+          stopRecording();
+        }, 5000);
+
+      } catch (error) {
+        console.error("Error starting test recording:", error);
+        alert("Error al iniciar grabación de prueba");
+      }
+    }
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startTestRecording();
+    }
+  };
+
   const activateEmergency = async () => {
     setIsEmergencyActive(true);
     setCurrentContactIndex(0);

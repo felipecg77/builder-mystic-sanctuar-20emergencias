@@ -460,10 +460,38 @@ export default function Index() {
             </div>
 
             {currentLocation && (
-              <div className="text-xs text-muted-foreground">
-                📍 Última ubicación: {currentLocation.latitude.toFixed(6)},{" "}
-                {currentLocation.longitude.toFixed(6)}
-                <br />⏰ {new Date(currentLocation.timestamp).toLocaleString()}
+              <div className="bg-secondary/30 rounded-lg p-3 space-y-2">
+                <div className="text-xs text-muted-foreground">
+                  📍 <strong>Ubicación actual:</strong>
+                  <br />
+                  <span className="font-mono">{currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}</span>
+                  <br />
+                  🎯 <strong>Precisión:</strong> {currentLocation.accuracy.toFixed(0)} metros
+                  <br />
+                  ⏰ <strong>Actualizada:</strong> {new Date(currentLocation.timestamp).toLocaleString()}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={updateCurrentLocation}
+                    className="text-xs flex items-center gap-1"
+                  >
+                    <MapPin className="h-3 w-3" />
+                    Actualizar
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const url = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
+                      window.open(url, '_blank');
+                    }}
+                    className="text-xs flex items-center gap-1"
+                  >
+                    🗺️ Ver en Mapa
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>

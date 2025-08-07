@@ -119,6 +119,27 @@ export default function Index() {
     }
   };
 
+  const updateCurrentLocation = () => {
+    if (locationPermission === "granted" && "geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          updateLocation(position);
+          // Show success feedback
+          const log = emergencyLog.length > 0 ? [...emergencyLog] : [];
+          log.push(`📍 Ubicación actualizada: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`);
+          if (isEmergencyActive) {
+            setEmergencyLog(log);
+          }
+        },
+        (error) => {
+          console.error("Error updating location:", error);
+          alert("No se pudo actualizar la ubicación. Verifica tus permisos.");
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+  };
+
   const requestMicPermission = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

@@ -341,15 +341,21 @@ export default function Index() {
               <Button
                 onClick={activateEmergency}
                 size="lg"
-                className="w-full h-32 text-2xl font-bold bg-emergency hover:bg-emergency-dark text-emergency-foreground rounded-2xl"
-                disabled={contacts.length === 0}
+                className="w-full h-32 text-2xl font-bold bg-emergency hover:bg-emergency-dark text-emergency-foreground rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95"
               >
                 <Shield className="mr-3 h-8 w-8" />
                 EMERGENCIA
               </Button>
               <p className="text-sm text-muted-foreground mt-4">
-                Mantén presionado para activar
+                {contacts.length === 0
+                  ? "Activará emergencia y servicios locales"
+                  : "Enviará ubicación y llamará a contactos"}
               </p>
+              {contacts.length === 0 && (
+                <p className="text-xs text-warning-foreground bg-warning-light/20 rounded-md px-3 py-2 mt-2">
+                  ⚠️ Configura contactos para mayor protección
+                </p>
+              )}
             </CardContent>
           </Card>
         )}

@@ -193,32 +193,59 @@ export default function Index() {
   };
 
   const activateEmergency = async () => {
-    if (contacts.length === 0) {
-      alert("Agrega al menos un contacto de emergencia primero");
-      return;
-    }
-
     setIsEmergencyActive(true);
     setCurrentContactIndex(0);
     const log: string[] = [];
 
+    log.push("🚨 EMERGENCIA ACTIVADA");
+    log.push(`⏰ ${new Date().toLocaleString()}`);
+
     // Get current location
     if (locationPermission === "granted") {
-      navigator.geolocation.getCurrentPosition(updateLocation);
-      log.push(
-        `📍 Ubicación actualizada: ${currentLocation?.latitude.toFixed(6)}, ${currentLocation?.longitude.toFixed(6)}`,
-      );
+      navigator.geolocation.getCurrentPosition((position) => {
+        updateLocation(position);
+        const newLog = [
+          ...log,
+          `📍 Ubicación capturada: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
+          `🎯 Precisión: ${position.coords.accuracy.toFixed(0)} metros`
+        ];
+        setEmergencyLog(newLog);
+      });
+    } else {
+      log.push("⚠️ Ubicación no disponible - activar permisos");
     }
 
     // Start recording
     if (micPermission === "granted") {
       await startRecording();
-      log.push("🎤 Grabación de audio iniciada");
+      log.push("🎤 Grabación de audio iniciada (30 segundos)");
+    } else {
+      log.push("⚠️ Micrófono no disponible - activar permisos");
     }
 
-    // Start calling contacts
-    log.push("📞 Iniciando llamadas de emergencia...");
-    callNextContact(0, log);
+    setEmergencyLog([...log]);
+
+    // Handle contacts
+    if (contacts.length === 0) {
+      log.push("⚠️ No hay contactos configurados");
+      log.push("📞 Llama manualmente a servicios de emergencia:");
+      log.push("🚑 Cruz Roja: 065");
+      log.push("🚓 Policía: 911");
+      log.push("🚒 Bomberos: 911");
+      setEmergencyLog([...log]);
+
+      // Auto-dial emergency services after 5 seconds
+      setTimeout(() => {
+        if (confirm("¿Llamar automáticamente al 911?")) {
+          window.location.href = "tel:911";
+        }
+      }, 5000);
+    } else {
+      // Start calling contacts
+      log.push("📞 Iniciando llamadas de emergencia...");
+      setEmergencyLog([...log]);
+      callNextContact(0, [...log]);
+    }
   };
 
   const callNextContact = (index: number, log: string[]) => {

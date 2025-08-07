@@ -301,24 +301,34 @@ export default function Index() {
 
         {/* Emergency Status */}
         {isEmergencyActive && (
-          <Card className="border-emergency bg-emergency-light/10">
+          <Card className="border-emergency bg-emergency-light/10 animate-pulse">
             <CardHeader className="pb-3">
               <CardTitle className="text-emergency flex items-center gap-2">
-                <Shield className="h-5 w-5" />
+                <Shield className="h-5 w-5 animate-pulse" />
                 EMERGENCIA ACTIVA
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {emergencyLog.map((entry, index) => (
-                <p key={index} className="text-sm text-foreground">
-                  {entry}
-                </p>
-              ))}
-              {contacts.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-emergency" />
-                  <span className="text-sm">
+              <div className="max-h-40 overflow-y-auto space-y-2">
+                {emergencyLog.map((entry, index) => (
+                  <p key={index} className="text-sm text-foreground bg-background/50 rounded px-2 py-1">
+                    {entry}
+                  </p>
+                ))}
+              </div>
+              {contacts.length > 0 && currentContactIndex < contacts.length && (
+                <div className="flex items-center gap-2 bg-secondary/50 rounded p-3">
+                  <Phone className="h-4 w-4 text-emergency animate-bounce" />
+                  <span className="text-sm font-medium">
                     Contactando: {contacts[currentContactIndex]?.name}
+                  </span>
+                </div>
+              )}
+              {isRecording && (
+                <div className="flex items-center gap-2 bg-safe-light/20 rounded p-3">
+                  <Mic className="h-4 w-4 text-safe animate-pulse" />
+                  <span className="text-sm text-safe">
+                    🔴 Grabando audio...
                   </span>
                 </div>
               )}

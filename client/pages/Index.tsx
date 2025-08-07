@@ -413,7 +413,16 @@ export default function Index() {
                 >
                   {locationPermission === "granted" ? "Permitido" : "Denegado"}
                 </Badge>
-                {locationPermission !== "granted" && (
+                {locationPermission === "granted" ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={updateCurrentLocation}
+                    className="text-xs"
+                  >
+                    Actualizar
+                  </Button>
+                ) : (
                   <Button
                     size="sm"
                     variant="outline"

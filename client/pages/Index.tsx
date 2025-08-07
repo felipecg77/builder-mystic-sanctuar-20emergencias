@@ -615,11 +615,11 @@ export default function Index() {
                   <Plus className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Agregar Contacto</DialogTitle>
+                  <DialogTitle>Agregar Contacto de Emergencia</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
+                <div className="space-y-4 pt-2">
                   <div>
                     <Label htmlFor="name">Nombre</Label>
                     <Input

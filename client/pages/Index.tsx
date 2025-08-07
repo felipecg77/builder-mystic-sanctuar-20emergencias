@@ -486,7 +486,7 @@ export default function Index() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Mic className="h-4 w-4" />
+                <Mic className={`h-4 w-4 ${isRecording ? 'text-emergency animate-pulse' : ''}`} />
                 <span>Micrófono</span>
               </div>
               <div className="flex items-center gap-2">
@@ -497,7 +497,16 @@ export default function Index() {
                 >
                   {micPermission === "granted" ? "Permitido" : "Denegado"}
                 </Badge>
-                {micPermission !== "granted" && (
+                {micPermission === "granted" ? (
+                  <Button
+                    size="sm"
+                    variant={isRecording ? "destructive" : "outline"}
+                    onClick={toggleRecording}
+                    className="text-xs"
+                  >
+                    {isRecording ? "Parar" : "Probar"}
+                  </Button>
+                ) : (
                   <Button
                     size="sm"
                     variant="outline"

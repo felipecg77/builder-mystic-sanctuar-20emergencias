@@ -553,6 +553,48 @@ export default function Index() {
                 </div>
               </div>
             )}
+
+            {micPermission === "granted" && (
+              <div className="bg-secondary/30 rounded-lg p-3 space-y-2">
+                <div className="text-xs text-muted-foreground">
+                  🎤 <strong>Estado del Micrófono:</strong>
+                  <br />
+                  {isRecording ? (
+                    <span className="text-emergency font-semibold animate-pulse">
+                      🔴 GRABANDO... (Reproducirá automáticamente al finalizar)
+                    </span>
+                  ) : (
+                    <span className="text-safe">
+                      ✅ Listo para grabar
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant={isRecording ? "destructive" : "outline"}
+                    onClick={toggleRecording}
+                    className="text-xs flex items-center gap-1"
+                  >
+                    <Mic className={`h-3 w-3 ${isRecording ? 'animate-pulse' : ''}`} />
+                    {isRecording ? "Parar Grabación" : "Prueba de 5 seg"}
+                  </Button>
+                  {!isRecording && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={startTestRecording}
+                      className="text-xs flex items-center gap-1"
+                    >
+                      🎧 Grabar y Reproducir
+                    </Button>
+                  )}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  💡 La prueba graba 5 segundos y reproduce el audio automáticamente
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 

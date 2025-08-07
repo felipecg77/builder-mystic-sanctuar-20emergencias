@@ -7,8 +7,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AppHeader from "./components/AppHeader";
 import Index from "./pages/Index";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
+import Placeholder from "./pages/Placeholder";
 import NotFound from "./pages/NotFound";
+import { Users, History, Info } from "lucide-react";
 
 const queryClient = new QueryClient();
 

@@ -23,8 +23,41 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AppHeader />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
+          <Route
+            path="/contacts"
+            element={
+              <Placeholder
+                title="Gestión de Contactos"
+                description="Administra tus contactos de emergencia de forma avanzada"
+                icon={<Users className="h-12 w-12 text-muted-foreground" />}
+              />
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <Placeholder
+                title="Historial de Emergencias"
+                description="Revisa el registro de todas tus activaciones de emergencia"
+                icon={<History className="h-12 w-12 text-muted-foreground" />}
+              />
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <Placeholder
+                title="Acerca de SafeAlert"
+                description="Información sobre la aplicación, versión y desarrolladores"
+                icon={<Info className="h-12 w-12 text-muted-foreground" />}
+              />
+            }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
